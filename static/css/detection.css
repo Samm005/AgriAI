@@ -139,7 +139,7 @@ font-weight:600;
 cursor:pointer;
 transition:0.3s;
 
-margin-top:10px;   /* spacing from hint box */
+margin-top:10px; 
 }
 
 button:hover{
@@ -271,7 +271,7 @@ font-weight:500;
 .hint-note{
 font-size:13px;
 margin-bottom:12px;
-color:#cbd5e1;
+color:#034a13;
 }
 
 .hint-box{
