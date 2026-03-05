@@ -52,8 +52,15 @@ email:email,
 password:password
 })
 })
-.then(res=>res.json())
-.then(data=>{
+.then(async res=>{
+
+if(!res.ok){
+error.innerText="Server is starting. Please try again in a few seconds."
+return
+}
+
+const data = await res.json()
+
 if(data.success){
 
 localStorage.setItem("userEmail",data.email)
@@ -63,6 +70,10 @@ window.location="/home"
 }else{
 error.innerText=data.message
 }
+
+})
+.catch(()=>{
+error.innerText="Unable to connect to server."
 })
 
 }
