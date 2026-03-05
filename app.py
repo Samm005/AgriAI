@@ -191,6 +191,26 @@ def predict():
     predicted_label = le.inverse_transform(pred_class)[0]
     confidence = float(np.max(probs))
 
+    if Temperature > 40 and Soil_Moisture < 30:
+        predicted_label = "Combined Stress - Heat & Drought"
+        confidence = max(confidence, 0.65)
+
+    elif Soil_Moisture < 25 and Rainfall < 50:
+        predicted_label = "Water Stress - Severe Drought"
+        confidence = max(confidence, 0.70)
+
+    elif Soil_Moisture > 80 and Rainfall > 200:
+        predicted_label = "Water Stress - Waterlogging"
+        confidence = max(confidence, 0.70)
+
+    elif Temperature > 38 and Humidity < 30:
+        predicted_label = "Temperature Stress - Extreme Heat"
+        confidence = max(confidence, 0.65)
+
+    elif Soil_pH < 5.5 or Soil_pH > 8:
+        predicted_label = "Soil & Chemical Stress - pH Imbalance"
+        confidence = max(confidence, 0.70)
+
     severity_score = (1 - confidence) * 100
 
     if severity_score < 30:
