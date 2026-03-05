@@ -265,3 +265,31 @@ font-size:14px;
 text-align:center;
 font-weight:500;
 }
+
+.hint-note{
+font-size:13px;
+margin-bottom:10px;
+color:#555;
+}
+
+.hint-box{
+margin-top:20px;
+background:#eef7f1;
+padding:15px;
+border-radius:10px;
+font-size:14px;
+color:#1b4332;
+}
+
+.hint-box h3{
+margin-bottom:10px;
+color:#2d6a4f;
+}
+
+.hint-box ul{
+padding-left:18px;
+}
+
+.hint-box li{
+margin-bottom:5px;
+}
