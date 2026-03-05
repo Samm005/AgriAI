@@ -7,7 +7,10 @@ const resultCard=document.getElementById("resultCard");
 loader.style.display="block";
 resultCard.style.display="none";
 
+const email=localStorage.getItem("userEmail");
+
 const data={
+email:email,
 SAVI:document.getElementById("SAVI").value,
 Temperature:document.getElementById("Temperature").value,
 Humidity:document.getElementById("Humidity").value,
@@ -45,7 +48,10 @@ ${data.recommendations.map(r=>`<p class="rec">• ${r}</p>`).join("")}
 });
 }
 
+
 if(document.getElementById("historyContainer")){
+
+const email=localStorage.getItem("userEmail");
 
 const welcome=document.getElementById("welcome");
 const hour=new Date().getHours();
@@ -58,7 +64,7 @@ else greeting="Good Night 🌙";
 
 welcome.innerText=greeting;
 
-fetch("/history")
+fetch("/history/"+email)
 .then(res=>res.json())
 .then(data=>{
 

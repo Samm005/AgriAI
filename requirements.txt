@@ -6,3 +6,4 @@ gunicorn
 joblib
 pymongo
 bcrypt
+python-dotenv

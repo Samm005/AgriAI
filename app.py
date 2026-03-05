@@ -1,4 +1,3 @@
-import pickle
 from flask import Flask, render_template, request, jsonify
 from pymongo import MongoClient
 import joblib
@@ -6,18 +5,23 @@ import numpy as np
 import pandas as pd
 import bcrypt
 from datetime import datetime
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
 
-client = MongoClient("mongodb+srv://agriai:agriai123@cluster0.c7rqeds.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
+client = MongoClient(os.getenv("MONGO_URI"))
 db = client["agriai"]
 
 users_collection = db["users"]
 detections_collection = db["detections"]
 
 rf = joblib.load("model.joblib")
-scaler = pickle.load(open("scaler.pkl", "rb"))
-le = pickle.load(open("label_encoder.pkl", "rb"))
+scaler = joblib.load("scaler.pkl")
+le = joblib.load("label_encoder.pkl")
+
 normal_moisture = 50
 
 features = [
@@ -40,45 +44,43 @@ def generate_recommendation(predicted_label, confidence):
     if confidence < 0.35:
         recommendations.append("Model confidence is low. Field inspection recommended.")
 
-    if "Drought" in predicted_label:
+    if predicted_label == "Water Stress - Drought":
         recommendations.append("Increase irrigation gradually.")
-        recommendations.append("Use drip irrigation to conserve water.")
+        recommendations.append("Use drip irrigation.")
 
-    if "Waterlogging" in predicted_label:
-        recommendations.append("Improve drainage system immediately.")
-        recommendations.append("Avoid further irrigation.")
+    elif predicted_label == "Water Stress - Waterlogging":
+        recommendations.append("Improve drainage.")
+        recommendations.append("Avoid irrigation.")
 
-    if "Heat" in predicted_label:
-        recommendations.append("Use shading nets or mulching.")
+    elif predicted_label == "Temperature Stress - Heat":
+        recommendations.append("Use shading nets.")
         recommendations.append("Apply anti-transpirant spray.")
 
-    if "Cold" in predicted_label:
-        recommendations.append("Use protective covers or greenhouse methods.")
+    elif predicted_label == "Temperature Stress - Cold":
+        recommendations.append("Use protective covers.")
         recommendations.append("Adjust irrigation timing.")
 
-    if "pH Imbalance" in predicted_label:
+    elif predicted_label == "Soil & Chemical Stress - pH Imbalance":
         recommendations.append("Conduct soil testing.")
         recommendations.append("Apply lime or sulfur.")
 
-    if "Nutrient Deficiency" in predicted_label:
+    elif predicted_label == "Soil & Chemical Stress - Nutrient Deficiency":
         recommendations.append("Apply organic compost.")
-        recommendations.append("Check micronutrient levels.")
+        recommendations.append("Check micronutrients.")
 
-    if "Atmospheric" in predicted_label:
-        recommendations.append("Monitor sunlight exposure.")
-
-    if len(recommendations) == 0:
-        recommendations.append("Crop condition appears healthy.")
+    else:
+        recommendations.append("Crop condition healthy.")
         recommendations.append("Maintain monitoring.")
 
     return recommendations
+
 
 @app.route("/")
 def index():
     return render_template("index.html")
 
 @app.route("/home")
-def home_page():
+def home():
     return render_template("home.html")
 
 @app.route("/signup")
@@ -97,6 +99,7 @@ def detection():
 def dashboard():
     return render_template("dashboard.html")
 
+
 @app.route("/signup", methods=["POST"])
 def signup():
 
@@ -106,20 +109,19 @@ def signup():
     email = data["email"]
     password = data["password"]
 
-    existing_user = users_collection.find_one({"email": email})
-
-    if existing_user:
+    if users_collection.find_one({"email": email}):
         return jsonify({"success": False, "message": "User already exists"})
 
-    hashed_password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
+    hashed = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
 
     users_collection.insert_one({
         "name": name,
         "email": email,
-        "password": hashed_password.decode("utf-8")
+        "password": hashed.decode()
     })
 
-    return jsonify({"success": True, "redirect": "/home"})
+    return jsonify({"success": True})
+
 
 @app.route("/login", methods=["POST"])
 def login():
@@ -134,15 +136,18 @@ def login():
     if not user:
         return jsonify({"success": False, "message": "Invalid email or password"})
 
-    if bcrypt.checkpw(password.encode("utf-8"), user["password"].encode("utf-8")):
-        return jsonify({"success": True, "redirect": "/home"})
-    else:
-        return jsonify({"success": False, "message": "Invalid email or password"})
+    if bcrypt.checkpw(password.encode(), user["password"].encode()):
+        return jsonify({"success": True, "email": email})
+
+    return jsonify({"success": False, "message": "Invalid email or password"})
+
 
 @app.route("/predict", methods=["POST"])
 def predict():
 
     data = request.json
+
+    email = data["email"]
 
     SAVI = float(data["SAVI"])
     Temperature = float(data["Temperature"])
@@ -165,104 +170,63 @@ def predict():
     Extreme_Heat = 1 if Temperature > 40 else 0
 
     row = [
-        SAVI,Temperature,Humidity,
-        Rainfall,Wind_Speed,Soil_Moisture,
-        Soil_pH,Organic_Matter,Water_Flow,
-        Moisture_Temp_Interaction,
-        NDVI_Temp_Ratio,
-        pH_Deviation,
-        Moisture_Deviation,
-        High_Temp_Flag,
-        Low_Temp_Flag,
-        Extreme_Heat
+        SAVI,Temperature,Humidity,Rainfall,Wind_Speed,
+        Soil_Moisture,Soil_pH,Organic_Matter,Water_Flow,
+        Moisture_Temp_Interaction,NDVI_Temp_Ratio,
+        pH_Deviation,Moisture_Deviation,
+        High_Temp_Flag,Low_Temp_Flag,Extreme_Heat
     ]
 
     df = pd.DataFrame([row], columns=features)
-
-    df_scaled = pd.DataFrame(
-        scaler.transform(df),
-        columns=features
-    )
+    df_scaled = scaler.transform(df)
 
     probs = rf.predict_proba(df_scaled)
-    pred_class = rf.predict(df_scaled)
+    pred = rf.predict(df_scaled)
 
-    predicted_label = le.inverse_transform(pred_class)[0]
+    predicted_label = le.inverse_transform(pred)[0]
     confidence = float(np.max(probs))
-
-    if Temperature > 40 and Soil_Moisture < 30:
-        predicted_label = "Combined Stress - Heat & Drought"
-        confidence = max(confidence, 0.65)
-
-    elif Soil_Moisture < 25 and Rainfall < 50:
-        predicted_label = "Water Stress - Severe Drought"
-        confidence = max(confidence, 0.70)
-
-    elif Soil_Moisture > 80 and Rainfall > 200:
-        predicted_label = "Water Stress - Waterlogging"
-        confidence = max(confidence, 0.70)
-
-    elif Temperature > 38 and Humidity < 30:
-        predicted_label = "Temperature Stress - Extreme Heat"
-        confidence = max(confidence, 0.65)
-
-    elif Soil_pH < 5.5 or Soil_pH > 8:
-        predicted_label = "Soil & Chemical Stress - pH Imbalance"
-        confidence = max(confidence, 0.70)
 
     severity_score = (1 - confidence) * 100
 
-    if severity_score < 30:
-        severity_label = "Low"
-    elif severity_score < 60:
-        severity_label = "Medium"
-    else:
+    severity_label = "Low"
+    if severity_score > 60:
         severity_label = "High"
+    elif severity_score > 30:
+        severity_label = "Medium"
 
     recommendations = generate_recommendation(predicted_label, confidence)
 
     detections_collection.insert_one({
-
-        "SAVI": SAVI,
-        "Temperature": Temperature,
-        "Humidity": Humidity,
-        "Rainfall": Rainfall,
-        "Wind_Speed": Wind_Speed,
-        "Soil_Moisture": Soil_Moisture,
-        "Soil_pH": Soil_pH,
-        "Organic_Matter": Organic_Matter,
-        "Water_Flow": Water_Flow,
-        "NDVI": NDVI,
-
+        "email": email,
         "stress_type": predicted_label,
         "confidence": round(confidence,3),
         "severity_score": round(severity_score,2),
         "severity_level": severity_label,
         "recommendations": recommendations,
-
         "timestamp": datetime.now()
-
     })
 
     return jsonify({
-
         "stress_type": predicted_label,
         "confidence": round(confidence,3),
         "severity_score": round(severity_score,2),
         "severity_level": severity_label,
         "recommendations": recommendations
-
     })
 
-@app.route("/history")
-def history():
 
-    predictions = list(detections_collection.find().sort("timestamp",-1))
+@app.route("/history/<email>")
+def history(email):
+
+    predictions = list(
+        detections_collection.find({"email": email}).sort("timestamp",-1)
+    )
 
     for p in predictions:
         p["_id"] = str(p["_id"])
 
     return jsonify(predictions)
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)

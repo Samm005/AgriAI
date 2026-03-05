@@ -120,7 +120,10 @@ return
 loader.style.display="block"
 resultCard.style.display="none"
 
+const email = localStorage.getItem("userEmail")
+
 const data={
+email:email,
 SAVI:document.getElementById("SAVI").value,
 Temperature:document.getElementById("Temperature").value,
 Humidity:document.getElementById("Humidity").value,

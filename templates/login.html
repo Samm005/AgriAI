@@ -55,7 +55,11 @@ password:password
 .then(res=>res.json())
 .then(data=>{
 if(data.success){
-window.location.href=data.redirect
+
+localStorage.setItem("userEmail",data.email)
+
+window.location="/home"
+
 }else{
 error.innerText=data.message
 }
