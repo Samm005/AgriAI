@@ -40,31 +40,31 @@ def generate_recommendation(predicted_label, confidence):
     if confidence < 0.35:
         recommendations.append("Model confidence is low. Field inspection recommended.")
 
-    if predicted_label in ["Water Stress - Drought","Water Stress - Severe Drought","Combined Stress - Heat & Drought"]:
+    if "Drought" in predicted_label:
         recommendations.append("Increase irrigation gradually.")
         recommendations.append("Use drip irrigation to conserve water.")
 
-    if predicted_label == "Water Stress - Waterlogging":
+    if "Waterlogging" in predicted_label:
         recommendations.append("Improve drainage system immediately.")
         recommendations.append("Avoid further irrigation.")
 
-    if predicted_label in ["Temperature Stress - Heat","Temperature Stress - Extreme Heat","Combined Stress - Heat & Drought"]:
+    if "Heat" in predicted_label:
         recommendations.append("Use shading nets or mulching.")
         recommendations.append("Apply anti-transpirant spray.")
 
-    if predicted_label == "Temperature Stress - Cold":
+    if "Cold" in predicted_label:
         recommendations.append("Use protective covers or greenhouse methods.")
         recommendations.append("Adjust irrigation timing.")
 
-    if predicted_label == "Soil & Chemical Stress - pH Imbalance":
+    if "pH Imbalance" in predicted_label:
         recommendations.append("Conduct soil testing.")
         recommendations.append("Apply lime or sulfur.")
 
-    if predicted_label == "Soil & Chemical Stress - Nutrient Deficiency":
+    if "Nutrient Deficiency" in predicted_label:
         recommendations.append("Apply organic compost.")
         recommendations.append("Check micronutrient levels.")
 
-    if predicted_label == "Light & Atmospheric Stress":
+    if "Atmospheric" in predicted_label:
         recommendations.append("Monitor sunlight exposure.")
 
     if len(recommendations) == 0:
