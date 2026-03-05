@@ -1,0 +1,193 @@
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:"Segoe UI",sans-serif;
+}
+
+body{
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+padding:20px;
+
+background:
+radial-gradient(circle at center,
+rgba(99, 81, 5, 0.35) 0%,
+rgba(74,222,128,0.25) 25%,
+rgba(22,101,52,0.55) 45%,
+rgba(3, 97, 42, 0.85) 70%,
+#183204 100%),
+linear-gradient(135deg,#0f3d2e,#14532d);
+
+background-size:cover;
+}
+
+/* CARD */
+
+.card{
+width:100%;
+max-width:400px;
+padding:45px 40px;
+background:rgba(0,0,0,0.55);
+border-radius:22px;
+text-align:center;
+backdrop-filter:blur(10px);
+box-shadow:0 0 50px rgba(74,222,128,0.35);
+transition:transform 0.35s ease, box-shadow 0.35s ease;
+animation:cardFade 1s ease;
+}
+
+@keyframes cardFade{
+from{
+opacity:0;
+transform:translateY(30px);
+}
+to{
+opacity:1;
+transform:translateY(0);
+}
+}
+
+.card:hover{
+transform:translateY(-6px);
+box-shadow:0 0 70px rgb(74, 48, 1);
+border: #00fbff 2px solid;
+}
+
+.card h2{
+color:#4ade80;
+margin-bottom:30px;
+font-size:28px;
+font-weight:600;
+}
+
+/* INPUTS */
+
+.card input{
+width:100%;
+padding:14px 16px;
+margin-bottom:18px;
+border-radius:12px;
+border:none;
+outline:none;
+font-size:15px;
+background:#e5e7eb;
+transition:all 0.25s ease;
+}
+
+.card input:hover{
+background:#f3f4f6;
+}
+
+.card input:focus{
+background:white;
+box-shadow:0 0 10px rgba(74,222,128,0.7);
+transform:scale(1.02);
+}
+
+/* BUTTON */
+
+.card button{
+width:100%;
+padding:14px;
+border-radius:28px;
+border:none;
+background:#4ade80;
+color:#052e16;
+font-weight:600;
+font-size:16px;
+cursor:pointer;
+margin-top:10px;
+transition:all 0.3s ease;
+}
+
+.card button:hover{
+background:#22c55e;
+transform:scale(1.05);
+box-shadow:0 0 20px rgba(74,222,128,0.8);
+}
+
+.card button:active{
+transform:scale(0.97);
+}
+
+/* HOME BUTTON */
+
+.home-btn{
+display:block;
+margin-top:15px;
+padding:12px;
+border-radius:25px;
+text-align:center;
+text-decoration:none;
+background:transparent;
+border:2px solid #4ade80;
+color:#4ade80;
+font-weight:600;
+transition:all 0.3s ease;
+}
+
+.home-btn:hover{
+background:#4ade80;
+color:#052e16;
+box-shadow:0 0 15px rgba(74,222,128,0.7);
+transform:scale(1.03);
+}
+
+#message{
+margin-top:15px;
+color:white;
+font-size:14px;
+}
+
+/* TABLET */
+
+@media (max-width:768px){
+
+.card{
+padding:40px 30px;
+}
+
+.card h2{
+font-size:24px;
+}
+
+}
+
+/* MOBILE */
+
+@media (max-width:480px){
+
+.card{
+padding:35px 25px;
+border-radius:18px;
+}
+
+.card h2{
+font-size:22px;
+}
+
+.card input{
+padding:12px;
+font-size:14px;
+}
+
+.card button{
+padding:12px;
+font-size:15px;
+}
+
+}
+
+.switch{
+margin-top:15px;
+font-size:14px;
+color: white;
+}
+
+.switch a{
+color:#4ade80;
+text-decoration:none;
+}

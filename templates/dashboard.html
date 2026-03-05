@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Dashboard</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body>
+
+<nav>
+<div class="logo">🌱 AgriAI</div>
+
+<div class="links">
+<a href="/home">Home</a>
+<a href="/detection">Detection</a>
+<a href="/dashboard" class="active">Dashboard</a>
+<a href="/">Logout</a>
+</div>
+</nav>
+
+<section class="detect-section">
+
+<h1 id="welcome"></h1>
+
+<div id="historyContainer" class="history-grid"></div>
+
+</section>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+
+</body>
+</html>

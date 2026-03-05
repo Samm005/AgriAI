@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Crop Stress Detection</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/detection.css') }}">
+</head>
+<body>
+
+<nav>
+<div class="logo">🌿 AgriAI</div>
+
+<div class="links">
+<a href="/home">Home</a>
+<a href="/detection" class="active">Detection</a>
+<a href="/dashboard">Dashboard</a>
+<a href="/">Logout</a>
+</div>
+</nav>
+
+<section class="detect-section">
+
+<h1>Crop Stress Prediction</h1>
+
+<!-- INPUT CARD -->
+
+<div class="card">
+
+<div class="grid">
+
+<input id="SAVI" placeholder="SAVI" type="number" step="any">
+<input id="Temperature" placeholder="Temperature" type="number" step="any">
+
+<input id="Humidity" placeholder="Humidity" type="number" step="any">
+<input id="Rainfall" placeholder="Rainfall" type="number" step="any">
+
+<input id="Wind_Speed" placeholder="Wind Speed" type="number" step="any">
+<input id="Soil_Moisture" placeholder="Soil Moisture" type="number" step="any">
+
+<input id="Soil_pH" placeholder="Soil pH" type="number" step="any">
+<input id="Organic_Matter" placeholder="Organic Matter" type="number" step="any">
+
+<input id="Water_Flow" placeholder="Water Flow" type="number" step="any">
+<input id="NDVI" placeholder="NDVI" type="number" step="any">
+
+</div>
+
+<button onclick="predict()">Analyze</button>
+
+<p id="formError" class="form-error"></p>
+
+<div id="loader" class="loader"></div>
+
+</div>
+
+
+<!-- RESULT CARD -->
+
+<div id="resultCard" class="result-card" style="display:none;">
+
+<h2>Prediction Result</h2>
+
+<div id="resultBox"></div>
+
+</div>
+
+</section>
+
+<script>
+
+function predict(){
+
+const loader=document.getElementById("loader")
+const resultBox=document.getElementById("resultBox")
+const resultCard=document.getElementById("resultCard")
+const error=document.getElementById("formError")
+
+error.innerText=""
+
+const fields=[
+"SAVI","Temperature","Humidity","Rainfall",
+"Wind_Speed","Soil_Moisture","Soil_pH",
+"Organic_Matter","Water_Flow","NDVI"
+]
+
+for(let i=0;i<fields.length;i++){
+
+let value=document.getElementById(fields[i]).value
+
+if(value==="" || value===null){
+error.innerText="Please fill all fields before analyzing"
+return
+}
+
+}
+
+loader.style.display="block"
+resultCard.style.display="none"
+
+const data={
+SAVI:document.getElementById("SAVI").value,
+Temperature:document.getElementById("Temperature").value,
+Humidity:document.getElementById("Humidity").value,
+Rainfall:document.getElementById("Rainfall").value,
+Wind_Speed:document.getElementById("Wind_Speed").value,
+Soil_Moisture:document.getElementById("Soil_Moisture").value,
+Soil_pH:document.getElementById("Soil_pH").value,
+Organic_Matter:document.getElementById("Organic_Matter").value,
+Water_Flow:document.getElementById("Water_Flow").value,
+NDVI:document.getElementById("NDVI").value
+}
+
+fetch("/predict",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify(data)
+})
+.then(res=>res.json())
+.then(data=>{
+
+loader.style.display="none"
+resultCard.style.display="block"
+
+resultBox.innerHTML=`
+<h3 class="stress-title">Predicted Stress Type: ${data.stress_type}</h3>
+<p><strong>Confidence:</strong> ${data.confidence}</p>
+<p><strong>Severity Score:</strong> ${data.severity_score}</p>
+<p><strong>Severity Level:</strong> ${data.severity_level}</p>
+<h4>Recommendations</h4>
+${data.recommendations.map(r=>`<p class="rec">• ${r}</p>`).join("")}
+`
+
+})
+.catch(()=>{
+loader.style.display="none"
+error.innerText="Prediction failed. Please try again."
+})
+
+}
+
+</script>
+
+</body>
+</html>

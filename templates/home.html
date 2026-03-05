@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>AgriAI Home</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+</head>
+
+<body>
+
+<nav>
+<div class="logo">🌿 AgriAI</div>
+
+<div class="links">
+<a href="/home" class="active">Home</a>
+<a href="/detection">Detection</a>
+<a href="/dashboard">Dashboard</a>
+<a href="/">Logout</a>
+</div>
+</nav>
+
+<section class="hero">
+
+<div class="hero-card">
+
+<p class="hero-small">AI Crop Monitoring</p>
+
+<h1>Smart Crop Stress Detection System</h1>
+
+<p class="hero-desc">
+AgriAI analyzes environmental and soil parameters to identify crop stress
+conditions and help farmers take corrective action early.
+</p>
+
+<a href="/detection" class="hero-btn">Start Detection</a>
+
+</div>
+
+</section>
+
+<section class="section">
+
+<h2>Types of Crop Stress</h2>
+
+<div class="cards">
+
+<div class="card">
+<h3>Water Stress</h3>
+<p>Drought or excess water affects plant growth and reduces crop yield.</p>
+</div>
+
+<div class="card">
+<h3>Temperature Stress</h3>
+<p>Extreme heat or cold interferes with plant metabolic processes.</p>
+</div>
+
+<div class="card">
+<h3>Soil & Chemical Stress</h3>
+<p>Nutrient deficiency or pH imbalance weakens plant development.</p>
+</div>
+
+<div class="card">
+<h3>Light & Atmospheric Stress</h3>
+<p>Changes in sunlight, wind or humidity disturb plant health.</p>
+</div>
+
+</div>
+
+</section>
+
+<section class="section">
+
+<h2>Parameters Used</h2>
+
+<div class="cards">
+
+<div class="card">
+<h3>SAVI</h3>
+<p>Vegetation index that measures plant health while minimizing soil effects.</p>
+</div>
+
+<div class="card">
+<h3>NDVI</h3>
+<p>Indicates vegetation vigor and photosynthesis activity.</p>
+</div>
+
+<div class="card">
+<h3>Temperature</h3>
+<p>Ambient temperature affecting crop metabolic processes.</p>
+</div>
+
+<div class="card">
+<h3>Humidity</h3>
+<p>Controls plant transpiration and moisture balance.</p>
+</div>
+
+<div class="card">
+<h3>Rainfall</h3>
+<p>Impacts soil water availability and irrigation requirements.</p>
+</div>
+
+<div class="card">
+<h3>Soil Moisture</h3>
+<p>Water present in soil necessary for root absorption.</p>
+</div>
+
+<div class="card">
+<h3>Soil pH</h3>
+<p>Determines nutrient availability in soil.</p>
+</div>
+
+<div class="card">
+<h3>Organic Matter</h3>
+<p>Improves soil fertility and water retention.</p>
+</div>
+
+<div class="card">
+<h3>Water Flow</h3>
+<p>Monitors irrigation distribution across farmland.</p>
+</div>
+
+</div>
+
+</section>
+
+<section class="overview">
+
+<div class="overview-box">
+
+<h2>About AgriAI</h2>
+
+<p>
+AgriAI is an intelligent crop monitoring system that predicts crop stress
+using machine learning models trained on agricultural parameters.
+</p>
+
+<p>
+The system analyzes environmental and soil conditions to detect
+stress early and recommend corrective actions for farmers.
+</p>
+
+<p>
+Users can analyze field conditions, detect crop stress,
+and visualize prediction history through interactive dashboards.
+</p>
+
+</div>
+
+</section>
+
+</body>
+</html>
