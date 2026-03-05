@@ -15,8 +15,8 @@ users_collection = db["users"]
 detections_collection = db["detections"]
 
 rf = joblib.load("model.joblib")
-scaler = joblib.load("scaler.joblib")
-le = joblib.load("label_encoder.joblib")
+scaler = joblib.load("scaler.pkl")
+le = joblib.load("label_encoder.pkl")
 normal_moisture = 50
 
 features = [
