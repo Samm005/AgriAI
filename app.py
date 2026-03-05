@@ -1,5 +1,4 @@
 import pickle
-
 from flask import Flask, render_template, request, jsonify
 from pymongo import MongoClient
 import joblib
@@ -41,34 +40,34 @@ def generate_recommendation(predicted_label, confidence):
     if confidence < 0.35:
         recommendations.append("Model confidence is low. Field inspection recommended.")
 
-    if predicted_label == "Water Stress - Drought":
+    if predicted_label in ["Water Stress - Drought","Water Stress - Severe Drought","Combined Stress - Heat & Drought"]:
         recommendations.append("Increase irrigation gradually.")
         recommendations.append("Use drip irrigation to conserve water.")
 
-    elif predicted_label == "Water Stress - Waterlogging":
+    if predicted_label == "Water Stress - Waterlogging":
         recommendations.append("Improve drainage system immediately.")
         recommendations.append("Avoid further irrigation.")
 
-    elif predicted_label == "Temperature Stress - Heat":
+    if predicted_label in ["Temperature Stress - Heat","Temperature Stress - Extreme Heat","Combined Stress - Heat & Drought"]:
         recommendations.append("Use shading nets or mulching.")
         recommendations.append("Apply anti-transpirant spray.")
 
-    elif predicted_label == "Temperature Stress - Cold":
+    if predicted_label == "Temperature Stress - Cold":
         recommendations.append("Use protective covers or greenhouse methods.")
         recommendations.append("Adjust irrigation timing.")
 
-    elif predicted_label == "Soil & Chemical Stress - pH Imbalance":
+    if predicted_label == "Soil & Chemical Stress - pH Imbalance":
         recommendations.append("Conduct soil testing.")
         recommendations.append("Apply lime or sulfur.")
 
-    elif predicted_label == "Soil & Chemical Stress - Nutrient Deficiency":
+    if predicted_label == "Soil & Chemical Stress - Nutrient Deficiency":
         recommendations.append("Apply organic compost.")
         recommendations.append("Check micronutrient levels.")
 
-    elif predicted_label == "Light & Atmospheric Stress":
+    if predicted_label == "Light & Atmospheric Stress":
         recommendations.append("Monitor sunlight exposure.")
 
-    else:
+    if len(recommendations) == 0:
         recommendations.append("Crop condition appears healthy.")
         recommendations.append("Maintain monitoring.")
 
