@@ -1,3 +1,5 @@
+import pickle
+
 from flask import Flask, render_template, request, jsonify
 from pymongo import MongoClient
 import joblib
@@ -15,8 +17,8 @@ users_collection = db["users"]
 detections_collection = db["detections"]
 
 rf = joblib.load("model.joblib")
-scaler = joblib.load("scaler.pkl")
-le = joblib.load("label_encoder.pkl")
+scaler = pickle.load(open("scaler.pkl", "rb"))
+le = pickle.load(open("label_encoder.pkl", "rb"))
 normal_moisture = 50
 
 features = [
