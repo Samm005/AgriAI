@@ -45,6 +45,9 @@ resultBox.innerHTML=`
 <h4>Recommendations</h4>
 ${data.recommendations.map(r=>`<p class="rec">• ${r}</p>`).join("")}
 `;
+})
+.catch(()=>{
+loader.style.display="none";
 });
 }
 
@@ -73,6 +76,8 @@ container.innerHTML="";
 
 data.forEach((item,index)=>{
 
+if(!item.SAVI) return;
+
 const card=document.createElement("div");
 card.className="history-card";
 
@@ -80,12 +85,15 @@ let severityClass="low";
 if(item.severity_level==="Medium") severityClass="medium";
 if(item.severity_level==="High") severityClass="high";
 
+const date=new Date(item.timestamp).toLocaleString();
+
 card.innerHTML=`
 <div class="severity-badge ${severityClass}">
 ${item.severity_level}
 </div>
 <h3 class="stress-title">${item.stress_type}</h3>
 <p><b>Confidence:</b> ${item.confidence}</p>
+<p><b>Date:</b> ${date}</p>
 <div class="chart-wrapper">
 <canvas id="chart${index}"></canvas>
 </div>
@@ -101,15 +109,15 @@ data:{
 labels:["SAVI","Temp","Humidity","Rainfall","Moisture","pH","Organic","Water Flow","NDVI"],
 datasets:[{
 data:[
-item.SAVI,
-item.Temperature,
-item.Humidity,
-item.Rainfall,
-item.Soil_Moisture,
-item.Soil_pH,
-item.Organic_Matter,
-item.Water_Flow,
-item.NDVI
+Number(item.SAVI),
+Number(item.Temperature),
+Number(item.Humidity),
+Number(item.Rainfall),
+Number(item.Soil_Moisture),
+Number(item.Soil_pH),
+Number(item.Organic_Matter),
+Number(item.Water_Flow),
+Number(item.NDVI)
 ],
 backgroundColor:[
 "#3b82f6",
@@ -121,14 +129,26 @@ backgroundColor:[
 "#8b5cf6",
 "#f97316",
 "#22c55e"
-]
+],
+borderWidth:2
 }]
 },
 options:{
-plugins:{legend:{labels:{color:"#fff"}}}
+animation:{
+animateRotate:true,
+duration:1500
+},
+plugins:{
+legend:{
+labels:{color:"#fff"}
+}
+}
 }
 });
 
 });
+})
+.catch(err=>{
+console.log(err);
 });
 }
