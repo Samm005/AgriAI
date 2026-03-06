@@ -197,15 +197,27 @@ def predict():
     recommendations = generate_recommendation(predicted_label, confidence)
 
     detections_collection.insert_one({
-        "email": email,
-        "stress_type": predicted_label,
-        "confidence": round(confidence,3),
-        "severity_score": round(severity_score,2),
-        "severity_level": severity_label,
-        "recommendations": recommendations,
-        "timestamp": datetime.now()
-    })
+    "email": email,
 
+    "SAVI": SAVI,
+    "Temperature": Temperature,
+    "Humidity": Humidity,
+    "Rainfall": Rainfall,
+    "Wind_Speed": Wind_Speed,
+    "Soil_Moisture": Soil_Moisture,
+    "Soil_pH": Soil_pH,
+    "Organic_Matter": Organic_Matter,
+    "Water_Flow": Water_Flow,
+    "NDVI": NDVI,
+
+    "stress_type": predicted_label,
+    "confidence": round(confidence,3),
+    "severity_score": round(severity_score,2),
+    "severity_level": severity_label,
+    "recommendations": recommendations,
+    "timestamp": datetime.now()
+})
+    
     return jsonify({
         "stress_type": predicted_label,
         "confidence": round(confidence,3),
